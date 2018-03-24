@@ -25,6 +25,6 @@ public class ComputerPlayer implements Player {
 
     @Override
     public boolean wantsToPlayAgain() {
-        return true;
+        return false;
     }
 }

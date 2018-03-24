@@ -12,6 +12,6 @@ public class Players {
     }
 
     public static List<Player> getTwoPlayers() {
-        return Arrays.asList(new HumanPlayer(), new ComputerPlayer());
+        return Arrays.asList(new ComputerPlayer(), new ComputerPlayer());
     }
 }
