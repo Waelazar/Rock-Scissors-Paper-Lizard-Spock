@@ -2,39 +2,67 @@ package at.refugeesCode.pset2test.controller;
 
 import at.refugeesCode.pset2test.model.Result;
 import at.refugeesCode.pset2test.model.move.Move;
-import at.refugeesCode.pset2test.model.move.Rock;
-import at.refugeesCode.pset2test.model.move.Scissors;
-import org.junit.Assert;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.mockito.internal.matchers.Equals;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.when;
 
 
 class JudgeTest {
 
     @Autowired
-    private Result result = new Result();
+    private Move firstMove;
+
+    @Autowired
+    private Move secondMove;
+
+    @Autowired
+    private Result result;
 
     @Autowired
     private Judge judge = new Judge();
 
-    @org.junit.jupiter.api.Test
-    void getResult() {
+    @Test
+    void getResultfirstplayerWon() {
 
-        Move move1 = Mockito.mock(Move.class);
-        Move move2 = Mockito.mock(Move.class);
+        firstMove = Mockito.mock(Move.class);
+        secondMove = Mockito.mock(Move.class);
 
-        Rock rock = Mockito.mock(Rock.class);
-        boolean defeats = rock.defeats(move1);
+        when(firstMove.defeats(secondMove)).thenReturn(true);
+        when(secondMove.defeats(firstMove)).thenReturn(false);
 
-        Scissors scissors = Mockito.mock(Scissors.class);
-        boolean defeats1 = scissors.defeats(rock);
+        Result result1 = judge.getResult(firstMove, secondMove);
 
-        Result result = judge.getResult(move1, move2);
-        Result result1 = judge.getResult(rock, scissors);
+        assertThat(result1.getWinner(), is("Player 1 wins"));
+    }
 
-        Assert.assertThat(defeats1,is(false));
+    @Test
+    void getResultSecondPlayerWin() {
+        firstMove = Mockito.mock(Move.class);
+        secondMove = Mockito.mock(Move.class);
+
+        when(firstMove.defeats(secondMove)).thenReturn(false);
+        when(secondMove.defeats(firstMove)).thenReturn(true);
+
+        Result result1 = judge.getResult(firstMove, secondMove);
+
+        assertEquals(result1.getWinner(), "Player 2 wins");
+    }
+
+    @Test
+    void getResultNobodyWins() {
+        firstMove = Mockito.mock(Move.class);
+        secondMove = Mockito.mock(Move.class);
+
+        when(firstMove.defeats(secondMove)).thenReturn(false);
+        when(secondMove.defeats(firstMove)).thenReturn(false);
+
+        Result result1 = judge.getResult(firstMove, secondMove);
+
+        assertEquals(result1.getWinner(), "Nobody wins");
     }
 }
